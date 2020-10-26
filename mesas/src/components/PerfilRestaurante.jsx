@@ -3,6 +3,7 @@ import axios from "axios";
 import { Formik } from "formik";
 import { Container, Col, Row, Form, Button, Table } from "react-bootstrap";
 import "../styles/profileproveedor-style.css";
+import ListaMesas from "./ListaMesas";
 
 class PerfilRestaurante extends React.Component {
   constructor(props) {
@@ -12,26 +13,36 @@ class PerfilRestaurante extends React.Component {
       mesas: {},
       mostrar_tabla: false,
       clientes: [],
-      cliente: {},
+      cliente: [],
+      fecha: "",
+      horarios: [],
+      mesa_reserva: {},
+      mostrar_form_reserva_con_cliente: false,
     };
   }
-  reservar() {
-    let formPost = {
-      cantidad: 5,
-      horario: "12-13",
-      fecha: "2020-03-05",
-      restauranteId: 1,
-      clienteId: 1,
-      mesaId: 1,
-    };
+  reservar(cliente, mesa, restaurante, fecha, horas) {
+    {
+      horas.map((h) => {
+        let formPost = {
+          cantidad: mesa.capacidad,
+          horario: h,
+          fecha: fecha,
+          restauranteId: restaurante.id,
+          clienteId: cliente.id,
+          mesaId: mesa.id,
+        };
+      });
+    }
   }
   render() {
     const { restaurante } = this.state;
     const { mesas } = this.state;
     const { clientes } = this.state;
     const { cliente } = this.state;
-    var horas = [];
-    var fecha = "";
+    const { horarios } = this.state;
+    const { mesa_reserva } = this.state;
+    let horas_reserva = [];
+    var fecha_reserva = "";
     const checkboxOptiones = [
       { key: "12-13", value: "12-13" },
       { key: "13-14", value: "13-14" },
@@ -51,16 +62,9 @@ class PerfilRestaurante extends React.Component {
         <br />
         <Formik
           onSubmit={(values) => {
-            
-            axios
-              .get(`http://localhost:9090/api/clientes/${values.clientes}`)
-              .then((response) => {
-                this.setState({
-                  cliente: response.data,
-                });
-              });
-            
-            values.opciones.map((o) =>{
+            fecha_reserva = values.fecha;
+
+            values.opciones.map((o) => {
               let objBusqueda = {
                 restauranteId: restaurante.id,
                 fecha: values.fecha,
@@ -75,16 +79,17 @@ class PerfilRestaurante extends React.Component {
                   this.setState({
                     mesas: response.data,
                     mostrar_tabla: true,
+                    fecha: fecha_reserva,
                   });
-                  horas.push({ o });
+                  horas_reserva.push({ o });
+                  this.setState({
+                    horarios: horas_reserva,
+                  });
                 })
-
                 .catch(function (error) {
                   console.log(error);
-                })
-              }
-            );
-
+                });
+            });
           }}
           initialValues={{
             opciones: [],
@@ -107,7 +112,7 @@ class PerfilRestaurante extends React.Component {
                 />
               ))}
               <Form.Row>
-                <Form.Group as={Col} controlId="clientes">
+                <Col sm={6} lg={6}>
                   <Form.Label>Seleccione un Cliente</Form.Label>
                   <Form.Control
                     size="sm"
@@ -125,12 +130,17 @@ class PerfilRestaurante extends React.Component {
                       </option>
                     ))}
                   </Form.Control>
-                </Form.Group>
+                </Col>
+                <Col sm={6} lg={6}>
+                  <br />
+                  <input
+                    type="date"
+                    name="fecha"
+                    onChange={handleChange}
+                  ></input>
+                </Col>
               </Form.Row>
 
-              <Form.Group>
-                <input type="date" name="fecha" onChange={handleChange}></input>
-              </Form.Group>
               <Row>
                 <Col xs="auto">
                   <Button type="submit" variant="outline-info">
@@ -145,43 +155,268 @@ class PerfilRestaurante extends React.Component {
 
         {this.state.mostrar_tabla ? (
           <>
-            <h2>Listado de mesas disponibles</h2>
-            <Table striped bordered hover variant="dark">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Piso</th>
-                  <th>Capacidad</th>
-                  <th>A nombre de</th>
-                  <th>Reservar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.mesas.map((m) => (
-                  <tr>
-                    <td>{m.nombre}</td>
-                    <td>{m.piso}</td>
-                    <td>{m.capacidad}</td>
-                    <td>
-                      {this.state.cliente.nombre} {this.state.cliente.apellido}
-                    </td>
-                    <td>
-                      <Button
-                        type="submit"
-                        variant="outline-light"
-                        onClick={this.reservar(
-                          this.state.cliente.id,
-                          m.id,
-                          this.state.restaurante.id
-                        )}
-                      >
-                        Reservar
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+            <ListaMesas
+              cliente={this.state.cliente}
+              mesas={this.state.mesas}
+              fecha={fecha_reserva}
+              horas={horas_reserva}
+            />
+            <h2>Buscar usuario</h2>
+            <Formik
+              onSubmit={(values) => {
+                // get cliente seleccionada
+                axios
+                  .get(`http://localhost:9090/api/clientes/${values.cedula}`)
+                  .then((response) => {
+                    this.setState({
+                      cliente: response.data,
+                    });
+                  });
+                if (cliente.length === 0) {
+                  this.setState({
+                    mostrar_form_reserva_con_cliente: false,
+                  });
+                  alert("No existe un cliente con esa cédula");
+                } else {
+                  this.setState({
+                    mostrar_form_reserva_con_cliente: true,
+                  });
+                }
+              }}
+              initialValues={{
+                cedula: "",
+              }}
+            >
+              {({ handleSubmit, handleChange, values, touched, errors }) => (
+                <Form noValidate onSubmit={handleSubmit}>
+                  <Form.Row>
+                    <Col sm={6} lg={6}>
+                      <Form.Label>Ingrese la cédula del Usuario</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="5409702"
+                        onChange={handleChange}
+                        name="cedula"
+                        value={values.cedula}
+                      />
+                    </Col>
+                  </Form.Row>
+                  <Button type="submit" variant="outline-info">
+                    Buscar
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+
+            <h2>Formulario de Reserva</h2>
+            <Formik
+              onSubmit={(values) => {
+                if (this.state.mostrar_form_reserva_con_cliente === false) {
+                  // debe crear primero el cliente
+                  // prepara el objeto cliente
+                  console.log("primero aca")
+                  let objCliente = {
+                    nombre: values.nombre,
+                    apellido: values.apellido,
+                    cedula: values.cedula,
+                  };
+                  // lamada post para crear el cliente
+                  axios
+                    .post("http://localhost:9090/api/clientes", objCliente)
+                    .then(function (response) {
+                      console.log("Se creó el cliente");
+                    })
+                    .catch(function (error) {
+                      console.log(error);
+                      alert("No se pudo crear el cliente");
+                    });
+                  axios
+                    .get(`http://localhost:9090/api/mesas/${values.mesa}`)
+                    .then((response) => {
+                      this.setState({
+                        mesa_reserva: response.data,
+                      });
+                    });
+                  // Si encontro un cliente en el form anterior de busqueda, efectua la reserva
+                  {
+                    // se recorre todos los horarios para crear un reserva en esa mesa en ese horario
+                    horarios.map((h) => {
+                      // se crea el objeto reserva para enviar via post
+                      let objReserva = {
+                        cantidad: mesa_reserva.capacidad,
+                        fecha: this.state.fecha,
+                        horario: h.o,
+                        restauranteId: restaurante.id,
+                        clienteId: cliente.id,
+                        mesaId: mesa_reserva.id,
+                      };
+                      console.log(objReserva);
+                      axios
+                        .post("http://localhost:9090/api/reservas", objReserva)
+                        .then(function (response) {
+                          alert("Se reservó correctamente!");
+                          window.location = "/";
+                        })
+                        .catch(function (error) {
+                          console.log(error);
+                          alert("Error, intente de nuevo");
+                        });
+                    });
+                  }
+                } else {
+                  // Ya se tenia un cliente
+                  axios
+                    .get(`http://localhost:9090/api/mesas/${values.mesa}`)
+                    .then((response) => {
+                      this.setState({
+                        mesa_reserva: response.data,
+                      });
+                    });
+                  // Si encontro un cliente en el form anterior de busqueda, efectua la reserva
+                  {
+                    // se recorre todos los horarios para crear un reserva en esa mesa en ese horario
+                    horarios.map((h) => {
+                      // se crea el objeto reserva para enviar via post
+                      let objReserva = {
+                        cantidad: mesa_reserva.capacidad,
+                        fecha: this.state.fecha,
+                        horario: h.o,
+                        restauranteId: restaurante.id,
+                        clienteId: cliente.id,
+                        mesaId: mesa_reserva.id,
+                      };
+                      console.log(objReserva);
+                      axios
+                        .post("http://localhost:9090/api/reservas", objReserva)
+                        .then(function (response) {
+                          alert("Se reservó correctamente!");
+                          window.location = "/";
+                        })
+                        .catch(function (error) {
+                          console.log(error);
+                          alert("Error, intente de nuevo");
+                        });
+                    });
+                  }
+                }
+              }}
+              initialValues={{
+                mesa: "",
+                nombre: "",
+                apellido: "",
+                cedula: "",
+              }}
+            >
+              {({ handleSubmit, handleChange, values, touched, errors }) => (
+                <Form noValidate onSubmit={handleSubmit}>
+                  {this.state.mostrar_form_reserva_con_cliente ? (
+                    //muestra el campo readonly ya que hay cliente
+                    <>
+                      <Form.Row>
+                        <Col sm={6} lg={6}>
+                          <Form.Label>Reserva a nombre de</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder={
+                              cliente.nombre + " " + cliente.apellido
+                            }
+                            readOnly
+                          />
+                        </Col>
+                        <Col sm={6} lg={6}>
+                          <Form.Label>Fecha </Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder={this.state.fecha}
+                            readOnly
+                          />
+                        </Col>
+                      </Form.Row>
+                    </>
+                  ) : (
+                    //muestra el campo para agregar cliente
+                    <>
+                      <Form.Row>
+                        <Col lg={6}>
+                          <Form.Label>Ingrese nombre del Cliente</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="ej: Bruno"
+                            onChange={handleChange}
+                            name="nombre"
+                            value={values.nombre}
+                          />
+                        </Col>
+                        <Col lg={6}>
+                          <Form.Label>Ingrese Apellido del Cliente</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="ej: Ruiz Diaz"
+                            onChange={handleChange}
+                            name="apellido"
+                            value={values.apellido}
+                          />
+                        </Col>
+                      </Form.Row>
+                      <Form.Row>
+                        <Col sm={6} lg={6}>
+                          <Form.Label>Ingrese la cédula del Usuario</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="ej:5409702"
+                            onChange={handleChange}
+                            name="cedula"
+                            value={values.cedula}
+                          />
+                        </Col>
+                      </Form.Row>
+                      <br />
+                      <Form.Row>
+                        <Col sm={6} lg={6}>
+                          <Form.Label>Fecha </Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder={this.state.fecha}
+                            readOnly
+                          />
+                        </Col>
+                        <Col sm={6} lg={6}>
+                          <Form.Label>Seleccione la mesa</Form.Label>
+                          <Form.Control
+                            as="select"
+                            name="mesa"
+                            value={values.mesa}
+                            onChange={handleChange}
+                          >
+                            <option value="" selected disabled hidden>
+                              Elija número de mesa a reservar.
+                            </option>
+                            {mesas.map((m) => (
+                              <option value={m.id}>{m.id}</option>
+                            ))}
+                          </Form.Control>
+                        </Col>
+                      </Form.Row>
+                    </>
+                  )}
+
+                  <br />
+                  <Form.Row>
+                    <Form.Label>Horarios</Form.Label>
+                    <ul>
+                      {horarios.map((h) => (
+                        <li>{h.o}</li>
+                      ))}
+                    </ul>
+                  </Form.Row>
+                  <Form.Row className="right">
+                    <Button type="submit" variant="outline-danger">
+                      Reservar
+                    </Button>
+                  </Form.Row>
+                </Form>
+              )}
+            </Formik>
           </>
         ) : null}
       </Container>
