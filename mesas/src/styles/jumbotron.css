@@ -1,3 +1,23 @@
-.banner-principal {
-    background-size: cover;
-  }
+
+.BannerPrincipal {
+  background: url("../media/jumbotronn.jpg") no-repeat center !important;
+  background-size: cover !important;
+  height: 25vw;
+}
+.TituloBanner {
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  padding-top: 70px;
+  font-family: Roboto medio;
+  background-color: transparent;
+}
+.SubtituloBanner {
+  font-size: 20px;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  font-family: Roboto medio;
+  padding-top: 5px;
+}

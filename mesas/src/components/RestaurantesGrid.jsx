@@ -35,11 +35,6 @@ class CategoriesGrid extends React.Component {
                     </CardGroup>
                     <br/>
                 </Container>   
-                <Container>
-                    <Link to={`/reservas`}>
-                        <Button variant="outline-info">Listar Reservas</Button>
-                    </Link>
-                </Container>
             </Fragment>           
         )
     }

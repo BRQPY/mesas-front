@@ -2,8 +2,8 @@ import React from 'react'
 import RestaurantesGrid from "./components/RestaurantesGrid"
 import PerfilRestaurante from "./components/PerfilRestaurante"
 import ReservasGrid from "./components/ReservasGrid"
+import NavBarHeader from './components/NavBarHeader'
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
-import "./App.css"
 
 
 function App() {
@@ -11,6 +11,7 @@ function App() {
     <div className="page-container">
       <div className="content-wrap">
         <Router>
+        <NavBarHeader />
           <Switch>
             <Route path="/" exact component={RestaurantesGrid} />
             <Route path="/restaurante/perfil/:id" exact component={PerfilRestaurante} />

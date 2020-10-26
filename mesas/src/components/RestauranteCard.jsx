@@ -5,7 +5,7 @@ import { Card, Button } from 'react-bootstrap'
 
 const CategoriesCard = ({ name, id, direccion}) => (
 
-    <Card style={{ width: '10rem' }} className="card-categorias">
+    <Card style={{ width: '10rem' }} className="CardCategorias">
         <Link to={`/restaurante/perfil/${id}`}>
             <Card.Img variant="top" 
                 src={require("../media/restaurante.jpg")}
@@ -13,8 +13,8 @@ const CategoriesCard = ({ name, id, direccion}) => (
                 height="30" />
         </Link>
 
-        <Card.Body className="card-categorias-body"> 
-            <Card.Title className="card-categorias-title">{name} </Card.Title>
+        <Card.Body className="CardCategoriasBody"> 
+            <Card.Title className="CardCategoriastitle">{name} </Card.Title>
             <Card.Text className="card-categorias-text">
                 {direccion}
             </Card.Text>

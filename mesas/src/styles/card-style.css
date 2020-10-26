@@ -2,15 +2,15 @@ body{
     background: radial-gradient(#F5F5F5, #ffff, #e5e5e5);
 }
 
-.card-categorias {
-    width: 18rem;
+.CardCategorias {
+    width: 28rem;
 }
 
-.card-categorias:hover {
+.CardCategorias:hover {
     box-shadow: 3px 3px 10px 1px rgba(29, 191, 219, 0.253) !important;
 }
 
-.card-categorias-body {
+.CardCategoriasBody {
     background-color: #F5F5F5;
     text-align: center;
     padding: 0.2rem 0 !important;
