@@ -2,8 +2,8 @@ import React, {Fragment} from "react"
 import axios from "axios"
 import RestautanteCard from "./RestauranteCard"
 import Banner from "./Banner"
-
-import { Container, Col, CardGroup} from 'react-bootstrap'
+import { Link } from "react-router-dom"
+import { Container, Col, CardGroup, Button} from 'react-bootstrap'
 
 class CategoriesGrid extends React.Component {
     constructor(props){
@@ -35,6 +35,11 @@ class CategoriesGrid extends React.Component {
                     </CardGroup>
                     <br/>
                 </Container>   
+                <Container>
+                    <Link to={`/reservas`}>
+                        <Button variant="outline-info">Listar Reservas</Button>
+                    </Link>
+                </Container>
             </Fragment>           
         )
     }

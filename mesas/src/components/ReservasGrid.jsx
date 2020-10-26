@@ -15,6 +15,26 @@ class ReservasGrid extends React.Component {
       cliente: {},
     };
   }
+
+  getNombreRestaurante(restauranteId){
+    axios.get(`http://localhost:9090/api/restaurantes/${restauranteId}`).then((response) => {
+      console.log(response.data.nombre);
+      return response.data.nombre;
+    });
+  }
+
+  getNombreCliente(clienteId){
+    axios.get(`http://localhost:9090/api/clientes/${clienteId}`).then((response) => {
+      return response.data.nombre;
+    });
+  }
+
+  getNombreMesa(mesaId){
+    axios.get(`http://localhost:9090/api/mesas/${mesaId}`).then((response) => {
+      return response.data.nombre;
+    });
+  }
+
   render() {
     const { restaurantes } = this.state;
     const { clientes } = this.state;
