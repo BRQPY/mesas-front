@@ -1,0 +1,44 @@
+.Perfil-resumido{
+    text-align: center;
+}
+.Perfil-resumido h5{
+    font-size: 20px;
+    padding-bottom: 10px;
+    font-family: Roboto;
+}
+.Compartir-redes {
+    text-align: center;
+    padding-top: 30px;
+}
+.Compartir-redes i {
+    padding-left: 0.5em;
+}
+.Informacion-resumida{
+    padding-top: 30px;
+    justify-content: center;
+}
+.perfil-pic{
+    height: 261px;
+    width: 275px;
+}
+.nombre-proveedor {
+    font-size: 36px;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+}
+
+.carousel {
+    width:100%;
+    height:100%;
+    margin: auto;
+}
+.carousel h5 {
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+}
+.Telefono-llamada {
+    padding-top: 18px;
+    text-align: left;
+}

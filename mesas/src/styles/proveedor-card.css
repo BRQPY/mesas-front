@@ -1,0 +1,15 @@
+.Card-principal{
+    width: 25rem;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    
+    font-family: Roboto;
+}
+.Link-proveedor{
+    color: Black;
+    text-decoration: none !important;
+}
+.Link-proveedor :hover{
+    color: Black; 
+    cursor:pointer; 
+}

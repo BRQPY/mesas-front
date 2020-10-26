@@ -1,0 +1,16 @@
+.filtroCiudades {
+    text-align: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.filtroCiudades h5{
+    padding-top: 10px;
+}
+.lista-proveedores {
+    padding-bottom: 15px;   
+    
+}
+.lista-proveedores i:hover{
+    color: #CAFAFE;   
+    
+}
